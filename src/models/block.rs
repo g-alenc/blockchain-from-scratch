@@ -75,6 +75,11 @@ impl Block{
 
         return block
     }
+
+    pub fn get_hash(&self)-> [u8; 32]{
+        return self.hash;
+    }
+
 }
 
 pub fn check_difficulty(hash: &[u8], difficulty: usize)-> bool{
