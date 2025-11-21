@@ -39,6 +39,11 @@ impl Blockchain{
             if !current_block.check_difficulty(self.difficulty){
                 return false
             }
+
+            // Check if the current_block has the hash it says it has (if not, reutrn false)
+            if current_block.calculate_hash() != current_block.get_hash() {
+                return false
+            }
             
             // If it's the first block, we don't need to check the previous block hash 
             if i == 0{ 
@@ -50,13 +55,19 @@ impl Blockchain{
             let previous_block = self.chain.get(previous_index).expect("Invalid index for chain vector");
             
             // Check if the current block have the right previous_block hash value (if not, reutrn false)
-            if !(current_block.get_previous_hash() == previous_block.get_hash()){
+            if current_block.get_previous_hash() != previous_block.get_hash(){
                 return false
             }
         }
 
         return true
     }
+
+    pub fn get_last_block(&self)-> &Block{
+        return self.chain.last().expect("The chain does not have a genesis block")
+
+    }
+
 }
 
 
