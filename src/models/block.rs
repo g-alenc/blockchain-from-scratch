@@ -14,7 +14,7 @@ pub struct Block {
 }
 
 impl Block{
-    fn new(data: String, previous_hash: [u8; 32]) -> Self{
+    pub fn new(data: String, previous_hash: [u8; 32]) -> Self{
         //Calculate the datestamp
         let now = SystemTime::now();
         let datestamp = now.duration_since(UNIX_EPOCH).unwrap().as_millis();
@@ -46,7 +46,7 @@ impl Block{
         return hash.into()
     }
 
-    fn mine(&mut self, difficulty: usize){
+    pub fn mine(&mut self, difficulty: usize){
         // println!("Initializing mining of the block with difficulty {}", difficulty);
         
         loop{
@@ -68,6 +68,13 @@ impl Block{
 
     }
 
+    // Return the first (mined) block of the blockchain
+    pub fn genesis(difficulty: usize) -> Block{
+        let mut block = Block::new("First block".to_string(), [0; 32]);
+        block.mine(difficulty);
+
+        return block
+    }
 }
 
 pub fn check_difficulty(hash: &[u8], difficulty: usize)-> bool{
