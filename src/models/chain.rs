@@ -1,17 +1,17 @@
 use crate::models::block::Block;
 //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
-struct blockchain {
+struct Blockchain {
     chain: Vec<Block>,
     difficulty: usize,
 
 }
 
-impl blockchain{
+impl Blockchain{
     pub fn new(difficulty: usize)-> Self{
         let genesis_block = Block::genesis(difficulty);
         let chain = vec![genesis_block]; 
 
-        blockchain{
+        Blockchain{
             chain,
             difficulty,
         }
@@ -28,6 +28,26 @@ impl blockchain{
 
         // Add the new block to the chain
         self.chain.push(new_block);
+    
     }
 }
 
+
+#[cfg(test)]
+mod tests{
+    use super::Blockchain;
+
+    #[test]
+    fn test_add_block(){
+        // Create a new blockchain
+        let mut blockchain = Blockchain::new(12);
+        
+        // Add a new block to the blockchain
+        blockchain.add_block("Test adding a new block".to_string());
+
+        // Print the block string
+        let last_block =  blockchain.chain.last().expect("chain is empty");
+        println!("Last lock: {:?}", last_block);
+
+    }
+}
