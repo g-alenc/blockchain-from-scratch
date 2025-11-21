@@ -79,6 +79,10 @@ impl Block{
         return self.hash;
     }
 
+    pub fn get_previous_hash(&self)-> [u8; 32]{
+        return self.previous_hash;
+    }
+
     pub fn check_difficulty(&self, difficulty: usize)-> bool{
         // Calculate the hash
         let hash = self.calculate_hash();
