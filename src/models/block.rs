@@ -53,7 +53,7 @@ impl Block{
             // Calculate the Hash
             let hash = self.calculate_hash();
             // Checks if the hash wins the difficulty
-            let is_valid = check_difficulty(&hash, difficulty);
+            let is_valid = self.check_difficulty(difficulty);
             
             if is_valid{
                 self.hash = hash;
@@ -65,7 +65,6 @@ impl Block{
             // Updates the nonce
             self.nonce += 1;
         }
-
     }
 
     // Return the first (mined) block of the blockchain
@@ -80,38 +79,41 @@ impl Block{
         return self.hash;
     }
 
-}
+    pub fn check_difficulty(&self, difficulty: usize)-> bool{
+        // Calculate the hash
+        let hash = self.calculate_hash();
 
-pub fn check_difficulty(hash: &[u8], difficulty: usize)-> bool{
+        // Check if the difficulty is smaller then the hash len
+        if difficulty > hash.len() * 8 {
+                return false;
+            }
 
-    // Check if the difficulty is smaller then the hash len
-    if difficulty > hash.len() * 8 {
-            return false;
+        let full_bytes = difficulty / 8;
+        let remaining_bits = difficulty % 8;
+
+        // Check the full bytes
+        for i in 0..full_bytes{
+            if hash[i] != 0{
+                return false
+            }
         }
 
-    let full_bytes = difficulty / 8;
-    let remaining_bits = difficulty % 8;
+        // Check the remaining bits
+        if remaining_bits > 0{
+            // Acess the last byte
+            let current_byte = hash[full_bytes];
 
-    // Check the full bytes
-    for i in 0..full_bytes{
-        if hash[i] != 0{
-            return false
+            // Check just the remaining bits of the last byte
+            if (current_byte >> (8 - remaining_bits)) != 0{
+                return false
+            }
         }
+
+        return true
     }
 
-    // Check the remaining bits
-    if remaining_bits > 0{
-        // Acess the last byte
-        let current_byte = hash[full_bytes];
-
-        // Check just the remaining bits of the last byte
-        if (current_byte >> (8 - remaining_bits)) != 0{
-            return false
-        }
-    }
-
-    return true
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -136,12 +138,12 @@ mod tests {
         assert_eq!(block, deserialized);
     }
 
-    //TODO: Implement the test for mine fn
     #[test]
     fn test_block_mine(){
         let mut block = Block::new("Test Data".to_string(), [0; 32]);
 
         block.mine(20);
+        println!("{:?}", block)
 
     }
 }
