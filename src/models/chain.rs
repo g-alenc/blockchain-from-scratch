@@ -30,6 +30,33 @@ impl Blockchain{
         self.chain.push(new_block);
     
     }
+
+    fn is_valid(&self)-> bool{
+
+        for (i, current_block) in self.chain.iter().enumerate() {
+            
+            // Check if the current block has a valid hash value (if not, reutrn false)
+            if !current_block.check_difficulty(self.difficulty){
+                return false
+            }
+            
+            // If it's the first block, we don't need to check the previous block hash 
+            if i == 0{ 
+                continue
+            }
+            
+            //Get the previous block
+            let previous_index = i.saturating_sub(1); // Calculate the previous index in a safe way
+            let previous_block = self.chain.get(previous_index).expect("Invalid index for chain vector");
+            
+            // Check if the current block have the right previous_block hash value (if not, reutrn false)
+            if !(current_block.get_previous_hash() == previous_block.get_hash()){
+                return false
+            }
+        }
+
+        return true
+    }
 }
 
 
@@ -47,7 +74,7 @@ mod tests{
 
         // Print the block string
         let last_block =  blockchain.chain.last().expect("chain is empty");
-        println!("Last lock: {:?}", last_block);
+        println!("Last lock': {:?}", last_block);
 
     }
 }
